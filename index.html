@@ -257,96 +257,120 @@ body {
     opacity: 0.4;
 }
 
-/* ─── CAPTCHA ─── */
-.captcha-wrap {
-    max-width: 380px;
+/* ─── CODE INPUT ─── */
+.code-wrap {
+    max-width: 420px;
     margin: 0 auto;
     opacity: 0;
     transform: translateY(10px);
     transition: all 0.6s ease;
 }
-.captcha-wrap.show {
+.code-wrap.show {
     opacity: 1;
     transform: translateY(0);
 }
 
-.captcha-box {
+.code-box {
     background: rgba(0, 12, 2, 0.6);
     border: 1px solid rgba(0, 255, 65, 0.15);
     border-radius: 10px;
-    padding: 16px 20px;
+    padding: 20px 24px;
     transition: all 0.4s ease;
 }
 
-.captcha-box.solved {
+.code-box.solved {
     border-color: rgba(0, 255, 65, 0.4);
     background: rgba(0, 20, 5, 0.6);
 }
 
-.captcha-label {
+.code-prompt {
+    font-family: var(--font-mono);
+    font-size: clamp(12px, 2.2vw, 14px);
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    letter-spacing: 1px;
+}
+
+.code-prompt .cursor {
+    animation: cursorBlink 0.7s step-end infinite;
+}
+
+.code-input-row {
     display: flex;
     align-items: center;
-    gap: 14px;
-    cursor: pointer;
-    user-select: none;
-    -webkit-tap-highlight-color: transparent;
-}
-
-.captcha-checkbox {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 28px;
-    height: 28px;
-    border: 2px solid rgba(0, 255, 65, 0.3);
+    gap: 12px;
+    border: 1px solid rgba(0, 255, 65, 0.2);
     border-radius: 6px;
-    background: transparent;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.3s ease;
-    position: relative;
+    padding: 4px 16px;
+    background: rgba(0, 0, 0, 0.3);
+    transition: border-color 0.3s;
 }
 
-.captcha-checkbox:hover {
-    border-color: rgba(0, 255, 65, 0.6);
+.code-input-row:focus-within {
+    border-color: var(--green);
+    box-shadow: 0 0 16px rgba(0, 255, 65, 0.08);
+}
+
+.code-input-row .dollar {
+    font-family: var(--font-mono);
+    color: var(--text-dim);
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.code-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--green);
+    font-family: var(--font-mono);
+    font-size: clamp(16px, 3vw, 20px);
+    letter-spacing: 4px;
+    padding: 10px 0;
+    text-transform: lowercase;
+}
+
+.code-input::placeholder {
+    color: rgba(0, 255, 65, 0.15);
+    letter-spacing: 1px;
+    text-transform: none;
+    font-size: clamp(12px, 2vw, 14px);
+}
+
+.code-submit {
+    background: transparent;
+    border: 1px solid rgba(0, 255, 65, 0.25);
+    border-radius: 4px;
+    color: var(--text-dim);
+    font-family: var(--font-mono);
+    font-size: 12px;
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: all 0.3s;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+.code-submit:hover {
+    border-color: var(--green);
+    color: var(--green);
     box-shadow: 0 0 12px rgba(0, 255, 65, 0.1);
 }
 
-.captcha-checkbox:checked {
-    background: var(--green);
-    border-color: var(--green);
-    box-shadow: 0 0 16px rgba(0, 255, 65, 0.25);
+.code-error {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: #ff5f56;
+    margin-top: 10px;
+    min-height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
 }
 
-.captcha-checkbox:checked::after {
-    content: "";
-    position: absolute;
-    left: 8px;
-    top: 3px;
-    width: 8px;
-    height: 14px;
-    border: solid #000;
-    border-width: 0 3px 3px 0;
-    transform: rotate(45deg);
-}
-
-.captcha-text {
-    font-family: var(--font-sans);
-    font-size: clamp(14px, 2.8vw, 16px);
-    color: var(--text);
-    font-weight: 400;
-}
-
-.captcha-badge {
-    margin-left: auto;
-    font-family: var(--font-sans);
-    font-size: 11px;
-    color: var(--text-dim);
-    padding: 4px 10px;
-    border: 1px solid rgba(0, 255, 65, 0.12);
-    border-radius: 4px;
-    letter-spacing: 0.5px;
-    font-weight: 600;
-    opacity: 0.5;
+.code-error.show {
+    opacity: 1;
 }
 
 /* ─── VERIFY ANIM ─── */
@@ -544,16 +568,21 @@ body {
 
         <div class="sep">✧ ✦ ✧</div>
 
-        <!-- ─── CAPTCHA ─── -->
-        <div class="captcha-wrap" id="captchaWrap">
-            <div class="captcha-box" id="captchaBox">
-                <label class="captcha-label" id="captchaLabel">
-                    <input type="checkbox" class="captcha-checkbox" id="captchaCheck">
-                    <span class="captcha-text">No soy un robot</span>
-                    <span class="captcha-badge">CAPTCHA</span>
-                </label>
+        <!-- ─── CÓDIGO SECRETO ─── -->
+        <div class="code-wrap" id="codeWrap">
+            <div class="code-box" id="codeBox">
+                <div class="code-prompt">
+                    &gt; INGRESE EL CÓDIGO DE ACCESO:<span class="cursor"> ▊</span>
+                </div>
+                <div class="code-input-row">
+                    <span class="dollar">$</span>
+                    <input class="code-input" id="codeInput" type="text"
+                           placeholder="escribe el código" autocomplete="off" spellcheck="false">
+                    <button class="code-submit" id="codeSubmit">ENTRAR</button>
+                </div>
+                <div class="code-error" id="codeError">✗ CÓDIGO INCORRECTO. INTENTE DE NUEVO.</div>
                 <div class="verify-anim" id="verifyAnim">
-                    <div class="verify-text" id="verifyText">VERIFICANDO IDENTIDAD<span class="loading-dots"></span></div>
+                    <div class="verify-text" id="verifyText">ACCESO AUTORIZADO<span class="loading-dots"></span></div>
                     <div class="verify-track"><div class="verify-fill" id="verifyFill"></div></div>
                 </div>
             </div>
@@ -585,15 +614,18 @@ body {
 const CONFIG = {
     mapsUrl: "https://maps.app.goo.gl/QQpUfsEroN1MzFAn7",
     welcome: "Ha sido elegido para asistir y compartir el cumpleaños del pinche árabe.",
+    accessCode: "abdel55",
 };
 // ═══════════════════════════════════════════════════════════════════
 
 // ─── ELEMENTS ───
 const $ = id => document.getElementById(id);
 const linesEl = $('termLines');
-const captchaCheck = $('captchaCheck');
-const captchaBox = $('captchaBox');
-const captchaWrap = $('captchaWrap');
+const codeInput = $('codeInput');
+const codeSubmit = $('codeSubmit');
+const codeBox = $('codeBox');
+const codeWrap = $('codeWrap');
+const codeError = $('codeError');
 const verifyAnim = $('verifyAnim');
 const verifyText = $('verifyText');
 const verifyFill = $('verifyFill');
@@ -608,7 +640,7 @@ const LINES = [
     { text: "" },
     { text: CONFIG.welcome, highlight: true },
     { text: "" },
-    { text: "> VERIFICA TU IDENTIDAD PARA ACCEDER A LAS COORDENADAS.", prompt: false },
+    { text: "> INGRESE EL CÓDIGO DE ACCESO PARA DESBLOQUEAR LAS COORDENADAS.", prompt: false },
 ];
 
 // ─── TYPEWRITER LINES ───
@@ -720,14 +752,28 @@ function animateParticles() {
 }
 animateParticles();
 
-// ─── CAPTCHA ───
-let captchaSolved = false;
+// ─── CÓDIGO DE ACCESO ───
+let codeSolved = false;
 
-captchaCheck.addEventListener('change', async function() {
-    if (!this.checked || captchaSolved) return;
-    captchaSolved = true;
+async function verificarCodigo() {
+    if (codeSolved) return;
 
-    captchaBox.classList.add('solved');
+    const valor = codeInput.value.trim().toLowerCase();
+
+    if (valor !== CONFIG.accessCode) {
+        codeError.classList.add('show');
+        codeInput.value = '';
+        codeInput.focus();
+        codeInput.style.color = '#ff5f56';
+        setTimeout(() => { codeInput.style.color = ''; }, 600);
+        return;
+    }
+
+    codeError.classList.remove('show');
+    codeSolved = true;
+    codeInput.disabled = true;
+    codeSubmit.disabled = true;
+    codeBox.classList.add('solved');
     verifyAnim.classList.add('active');
 
     const steps = 25;
@@ -736,37 +782,37 @@ captchaCheck.addEventListener('change', async function() {
         const pct = (i / steps) * 100;
         verifyFill.style.width = pct + '%';
 
-        if (i === 5) verifyText.textContent = 'VERIFICANDO IDENTIDAD...';
-        else if (i === 10) verifyText.textContent = 'ESCANEANDO CREDENCIALES...';
-        else if (i === 18) verifyText.textContent = 'AUTENTICACIÓN EN PROCESO...';
+        if (i === 6) verifyText.textContent = 'DECODIFICANDO...';
+        else if (i === 13) verifyText.textContent = 'AUTENTICACIÓN EN PROCESO...';
+        else if (i === 20) verifyText.textContent = 'DESBLOQUEANDO COORDENADAS...';
     }
 
-    verifyText.textContent = '✓ VERIFICACIÓN EXITOSA';
+    verifyText.textContent = '✓ ACCESO CONCEDIDO';
     verifyFill.classList.add('done');
     verifyFill.style.width = '100%';
 
     await sleep(500);
     verifyAnim.classList.remove('active');
 
-    // Show location button with animation
+    // Show location button
     btnLocation.href = CONFIG.mapsUrl;
     btnSection.classList.add('show');
     termFooter.classList.add('show');
 
-    // Scroll
     setTimeout(() => {
         btnSection.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }, 400);
-});
+}
 
-// ─── KEYBOARD: Enter to check captcha ───
-captchaCheck.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') captchaCheck.checked = !captchaCheck.checked;
+codeSubmit.addEventListener('click', verificarCodigo);
+codeInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') verificarCodigo();
 });
 
 // ─── START ───
 setTimeout(() => {
-    captchaWrap.classList.add('show');
+    codeWrap.classList.add('show');
+    setTimeout(() => codeInput.focus(), 400);
 }, 600);
 
 showLines();
